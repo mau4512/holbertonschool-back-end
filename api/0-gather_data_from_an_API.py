@@ -10,7 +10,7 @@ import requests
 import sys
 
 
-def get_employee_tasks(empID):
+def get_employee_todo_progress(empID):
     """ Prints info about productivity of given employee ID """
 
     name = ''
@@ -44,4 +44,4 @@ def get_employee_tasks(empID):
 
 # Only imports when called, but also passes first argument
 if __name__ == "__main__":
-    get_employee_tasks(sys.argv[1])
+    get_employee_todo_progress(sys.argv[1])
