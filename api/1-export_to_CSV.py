@@ -1,27 +1,26 @@
 #!/usr/bin/python3
+"""0x15. API, task 1. Export to CSV
 """
-place holder
-"""
+import csv
+from json import loads
+from requests import get
+from sys import argv
 
 
 if __name__ == "__main__":
+    user_id = argv[1]
 
-    import csv
-    import requests
-    from sys import argv
+    user_response = get('https://jsonplaceholder.typicode.com/users/' +
+                        user_id)
+    username = loads(user_response.text)['username']
 
-    if len(argv) < 2:
-        exit()
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}"
-        .format(argv[1]))
-    name = requests.get(
-        "https://jsonplaceholder.typicode.com/users?id={}".format(argv[1]))
-    name = name.json()
-    name = name[0]["username"]
-    todos = todos.json()
-    file_name = "{}.csv".format(argv[1])
-    with open(file_name, 'w') as csv_file:
-        writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_ALL)
-        for todo in todos:
-            writer.writerow([argv[1], name, todo['completed'], todo['title']])
+    todo_response = get('https://jsonplaceholder.typicode.com/users/' +
+                        user_id + '/todos')
+    todo_list = loads(todo_response.text)
+
+    with open(user_id + '.csv', mode='w') as csv_file:
+        task_writer = csv.writer(csv_file, delimiter=',', quotechar='"',
+                                 quoting=csv.QUOTE_ALL)
+        for task in todo_list:
+            task_writer.writerow([user_id, username, task['completed'],
+                                  task['title']])

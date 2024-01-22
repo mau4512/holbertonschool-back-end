@@ -1,30 +1,29 @@
 #!/usr/bin/python3
+"""0x15. API, task 2. Export to JSON
 """
-place holder
-"""
+from json import loads, dumps
+from requests import get
+from sys import argv
 
 
 if __name__ == "__main__":
+    user_id = argv[1]
 
-    import requests
-    from sys import argv
-    import json
+    user_response = get('https://jsonplaceholder.typicode.com/users/' +
+                        user_id)
+    username = loads(user_response.text)['username']
 
-    if len(argv) < 2:
-        exit()
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}"
-        .format(argv[1]))
-    name = requests.get(
-        "https://jsonplaceholder.typicode.com/users?id={}".format(argv[1]))
-    name = name.json()
-    name = name[0]["username"]
-    todos = todos.json()
-    result = {}
-    result[argv[1]] = []
-    for todo in todos:
-        result[argv[1]].append(
-            {"task": todo["title"], "completed": todo["completed"],
-             "username": name})
-    with open("{}.json".format(argv[1]), 'w') as result_file:
-        json.dump(result, result_file)
+    todo_response = get('https://jsonplaceholder.typicode.com/users/' +
+                        user_id + '/todos')
+    todo_list = loads(todo_response.text)
+
+    user_task_dict = {user_id: []}
+    for task in todo_list:
+        formatted_task = {}
+        formatted_task['task'] = task['title']
+        formatted_task['completed'] = task['completed']
+        formatted_task['username'] = username
+        user_task_dict[user_id].append(formatted_task)
+
+    with open(user_id + '.json', mode='w') as json_file:
+        json_file.write(dumps(user_task_dict))
